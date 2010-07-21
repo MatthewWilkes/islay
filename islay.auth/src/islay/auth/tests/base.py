@@ -12,12 +12,12 @@ def UnauthorisedApp(environ, start_response):
     headers = []
     headers.append(('WWW-Authenticate', 'Basic realm="WSGI"'))
 
-    start_response(401, headers)
+    start_response("401 Unauthorized", headers)
     return
 
 def ForbiddenApp(environ, start_response):
     headers = []
-    start_response(403, headers)
+    start_response("403 Forbidden", headers)
     return
 
 
@@ -29,7 +29,7 @@ class StaticTextChallenger(object):
     def challenge(self, environ, status, app_headers, forget_headers):
         def ChallengeApp(environ, start_response):
             headers = [("Content-type", "text/plain"), ]
-            start_response(200, headers)
+            start_response("200 OK", headers)
             return ["Who do you think you are?", ]
         return ChallengeApp
 
