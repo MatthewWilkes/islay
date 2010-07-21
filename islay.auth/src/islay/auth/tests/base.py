@@ -1,7 +1,9 @@
 import unittest
 from zope.interface import implements
 
-from islay.auth.interfaces import IChallenger
+from islay.auth.interfaces import IChallenger, IIdentifier
+
+creds = None
 
 class IslayAuthTestCase(unittest.TestCase):
     pass
@@ -20,6 +22,10 @@ def ForbiddenApp(environ, start_response):
     start_response("403 Forbidden", headers)
     return
 
+def OKApp(environ, start_response):
+    headers = []
+    start_response("200 OK", headers)
+    return
 
 # Fake plugins we can use to make life easy
 
@@ -32,6 +38,19 @@ class StaticTextChallenger(object):
             start_response("200 OK", headers)
             return ["Who do you think you are?", ]
         return ChallengeApp
+
+
+class GlobalNoteRemoteUser(object):
+    implements(IIdentifier)
+    
+    def identify(self, environ):
+        global creds
+        try:
+            creds = {'user':environ['REMOTE_USER'], }
+        except KeyError:
+            return None
+        
+        return creds
 
 # Constants
 

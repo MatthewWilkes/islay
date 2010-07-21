@@ -38,6 +38,5 @@ class TestChallenger(IslayAuthTestCase):
     
     def test_challenger_passes_403(self):
         self.app = AuthFactory({}, challenger='islay.auth.tests.base.StaticTextChallenger')(self.forbidden)
-
         response = self.request.get_response(self.app)
         self.assertEqual(response.status, '403 Forbidden')
