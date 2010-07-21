@@ -27,7 +27,6 @@ setup(name='islay.auth',
           'distribute',
           'WebOb',
           'zope.interface',
-          # -*- Extra requirements: -*-
       ],
       entry_points="""
             [paste.filter_factory]
