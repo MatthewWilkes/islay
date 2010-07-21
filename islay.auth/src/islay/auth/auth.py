@@ -11,6 +11,9 @@ class AuthMiddleware(object):
     
     def __call__(self, environ, start_response):
         request = Request(environ)
-        #print "Serving http://%s%s" % (environ['HTTP_HOST'], environ['PATH_INFO'])
         response = request.get_response(self.app)
+
+        if response.status == '401 Unauthorized':
+            NotImplemented
+        
         return response(environ, start_response)
