@@ -39,14 +39,16 @@ def AuthFactory(global_config, **local_conf):
             request = Request(environ)
 
             auth = None
+            identifier = None
 
             for identifier in self.identifiers:
-                result = identifier().identify(environ)
-                if result is None:
+                identifier = identifier()
+                credentials = identifier.identify(environ)
+                if credentials is None:
                     continue
                 else:
                     for authenticator in authenticators:
-                        auth = authenticator().authenticate(environ, result)
+                        auth = authenticator().authenticate(environ, credentials)
                         if auth is None:
                             continue
                         else:
@@ -61,16 +63,22 @@ def AuthFactory(global_config, **local_conf):
 
             if response.status == '401 Unauthorized':
                 for challenger in self.challengers:
+                    if identifier is not None:
+                        forget_headers = identifier.forget(environ, credentials)
+                    else:
+                        forget_headers = []
                     challenge = challenger().challenge(environ, 
                                                        response.status, 
                                                        response.headers, 
-                                                       [])
+                                                       forget_headers)
                     if challenge is None:
                         continue
                     else:
                         return challenge(environ, start_response)
-        
-            return response(environ, start_response)
+            else:
+                if identifier is not None:
+                    response.headers.update(identifier.remember(environ, credentials))
+                return response(environ, start_response)
     
     return AuthMiddleware
 

@@ -57,6 +57,13 @@ class GlobalNoteRemoteUser(object):
             return None
         
         return creds
+    
+    def remember(self, environ, identity):
+        return
+    
+    def forget(self, environ, identity):
+        return
+
 
 class isLowerCase(object):
     implements(IAuthenticator)
