@@ -1,0 +1,9 @@
+Release notes
+=============
+
+0.1
+---
+
+- Basic implementation and tests.  
+- Does not send WWW-Authentiate yet.
+- Alpha quality
