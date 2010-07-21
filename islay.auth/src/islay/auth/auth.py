@@ -40,15 +40,15 @@ def AuthFactory(global_config, **local_conf):
     
     for path in local_conf.get('identifier', '').split(','):
         if path:
-            identifiers.append(importFromName(path))
+            identifiers.append(importFromName(path))()
 
     for path in local_conf.get('authenticator', '').split(','):
         if path:
-            authenticators.append(importFromName(path))
+            authenticators.append(importFromName(path))()
 
     for path in local_conf.get('challenger', '').split(','):
         if path:
-            challengers.append(importFromName(path))
+            challengers.append(importFromName(path))()
 
     
     class AuthMiddleware(object):
@@ -67,13 +67,13 @@ def AuthFactory(global_config, **local_conf):
             identifier = None
 
             for identifier in self.identifiers:
-                identifier = identifier()
+                identifier = identifier
                 credentials = identifier.identify(environ)
                 if credentials is None:
                     continue
                 else:
                     for authenticator in authenticators:
-                        auth = authenticator().authenticate(environ, credentials)
+                        auth = authenticator.authenticate(environ, credentials)
                         if auth is None:
                             continue
                         else:
@@ -92,10 +92,10 @@ def AuthFactory(global_config, **local_conf):
                         forget_headers = identifier.forget(environ, credentials)
                     else:
                         forget_headers = []
-                    challenge = challenger().challenge(environ, 
-                                                       response.status, 
-                                                       response.headers, 
-                                                       forget_headers)
+                    challenge = challenger.challenge(environ, 
+                                                     response.status, 
+                                                     response.headers, 
+                                                     forget_headers)
                     if challenge is None:
                         continue
                     else:
