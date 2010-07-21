@@ -9,21 +9,42 @@ def importFromName(path):
 
 def AuthFactory(global_config, **local_conf):
     
+    identifiers = []
+    authenticators = []
     challengers = []
     
+    for path in local_conf.get('identifier', '').split(','):
+        if path:
+            identifiers.append(importFromName(path))
+
+    for path in local_conf.get('authenticator', '').split(','):
+        if path:
+            authenticators.append(importFromName(path))
+
     for path in local_conf.get('challenger', '').split(','):
         if path:
             challengers.append(importFromName(path))
+
     
     class AuthMiddleware(object):
         """An endpoint"""
     
         def __init__(self, app):
             self.app = app
-            self.challengers = challengers
+            self.identifiers = identifiers
+            self.authenticators = authenticators
+            self.challengers = challengers            
     
         def __call__(self, environ, start_response):
             request = Request(environ)
+
+            for identifier in self.identifiers:
+                result = identifier().identify(environ)
+                if result is None:
+                    continue
+                else:
+                    NotImplemented
+            
             response = request.get_response(self.app)
 
             if response.status == '401 Unauthorized':
