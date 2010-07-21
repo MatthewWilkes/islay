@@ -38,12 +38,24 @@ def AuthFactory(global_config, **local_conf):
         def __call__(self, environ, start_response):
             request = Request(environ)
 
+            auth = None
+
             for identifier in self.identifiers:
                 result = identifier().identify(environ)
                 if result is None:
                     continue
                 else:
-                    NotImplemented
+                    for authenticator in authenticators:
+                        auth = authenticator().authenticate(environ, result)
+                        if auth is None:
+                            continue
+                        else:
+                            break
+            
+            if auth:
+                request.environ['REMOTE_USER'] = auth
+            elif 'REMOTE_USER' in request.environ:
+                del request.environ['REMOTE_USER']
             
             response = request.get_response(self.app)
 
