@@ -173,7 +173,7 @@ class _IMetadataProvider(Interface):
 
 
 if not REPOZE_WHO:
-    _IMetadataProvider = IMetadataProvider
-    _IChallenger = IChallenger
-    _IAuthenticator = IAuthenticator
-    _IIdentifier = IIdentifier
+    IMetadataProvider = _IMetadataProvider
+    IChallenger = _IChallenger
+    IAuthenticator = _IAuthenticator
+    IIdentifier = _IIdentifier
