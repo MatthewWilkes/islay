@@ -1,7 +1,7 @@
 from zope.interface import Interface
 
 try:
-    from repoze.who.interfaces import IIdentifier, IAuthenticator, IChallenger, IMetadataProvider
+    from repoze.who.interfaces import IIdentifier, IAuthenticator, IChallenger
     REPOZE_WHO = True
 except ImportError:
     REPOZE_WHO = False
@@ -44,20 +44,6 @@ class _IIdentifier(Interface):
 
         o Return None to indicate that the plugin found no appropriate
           credentials.
-
-        o Only IIdentifier plugins which match one of the the current
-          request's classifications will be asked to perform
-          identification.
-
-        o An identifier plugin is permitted to add a key to the
-          environment named 'repoze.who.application', which should be
-          an arbitrary WSGI application.  If an identifier plugin does
-          so, this application is used instead of the downstream
-          application set up within the middleware.  This feature is
-          useful for identifier plugins which need to perform
-          redirection to obtain credentials.  If two identifier
-          plugins add a 'repoze.who.application' WSGI application to
-          the environment, the last one consulted will"win".
         """
 
     def remember(environ, identity):
@@ -114,10 +100,6 @@ class _IAuthenticator(Interface):
         dictionary, it should check for the existence of these keys
         before attempting to do anything; if they don't exist, it
         should return None).
-
-        An authenticator is permitted to add extra keys to the 'identity'
-        dictionary (e.g., to save metadata from a database query, rather
-        than requiring a separate query from an IMetadataProvider plugin).
         """
 
 
@@ -125,10 +107,6 @@ class _IChallenger(Interface):
 
     """ On egress: Conditionally initiate a challenge to the user to
         provide credentials.
-
-        Only challenge plugins which match one of the the current
-        response's classifications will be asked to perform a
-        challenge.
     """
 
     def challenge(environ, status, app_headers, forget_headers):
@@ -155,25 +133,7 @@ class _IChallenger(Interface):
         """
 
 
-class _IMetadataProvider(Interface):
-    """On ingress: When an identity is authenticated, metadata
-       providers may scribble on the identity dictionary arbitrarily.
-       Return values from metadata providers are ignored.
-    """
-
-    def add_metadata(environ, identity):
-        """
-        Add metadata to the identity (which is a dictionary).  One
-        value is always guaranteed to be in the dictionary when
-        add_metadata is called: 'repoze.who.userid', representing the
-        user id of the identity.  Availability and composition of
-        other keys will depend on the identifier plugin which created
-        the identity.
-        """
-
-
 if not REPOZE_WHO:
-    IMetadataProvider = _IMetadataProvider
     IChallenger = _IChallenger
     IAuthenticator = _IAuthenticator
     IIdentifier = _IIdentifier
