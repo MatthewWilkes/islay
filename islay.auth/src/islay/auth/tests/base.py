@@ -1,7 +1,7 @@
 import unittest
 from zope.interface import implements
 
-from islay.auth.interfaces import IChallenger, IIdentifier
+from islay.auth.interfaces import IChallenger, IIdentifier, IAuthenticator
 
 creds = None
 
@@ -27,6 +27,12 @@ def OKApp(environ, start_response):
     start_response("200 OK", headers)
     return
 
+def UsernameApp(environ, start_response):
+    headers = []
+    start_response("200 OK", headers)
+
+    return [environ.get('REMOTE_USER', ''), ]
+
 # Fake plugins we can use to make life easy
 
 class StaticTextChallenger(object):
@@ -51,6 +57,16 @@ class GlobalNoteRemoteUser(object):
             return None
         
         return creds
+
+class isLowerCase(object):
+    implements(IAuthenticator)
+
+    def authenticate(self, environ, identity):
+        if identity.get('user', "NONE").islower():
+            return identity['user']
+        else:
+            return None
+
 
 # Constants
 
