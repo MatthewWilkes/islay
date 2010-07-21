@@ -19,7 +19,7 @@ class TestUnauthorised(IslayAuthTestCase):
         self.assertEqual(response.status, '401 Unauthorized')
     
     def test_middleware_hides_401(self):
-        response = self.request.get_response(self.unauthorised)
+        response = self.request.get_response(self.app)
         self.failIf(response.status.startswith('40'), '40x status code')
 
 class TestChallenger(IslayAuthTestCase):
@@ -29,13 +29,16 @@ class TestChallenger(IslayAuthTestCase):
         self.request = webob.Request(e)
         self.unauthorised = UnauthorisedApp
         self.forbidden = ForbiddenApp
-        self.app = AuthFactory({}, challenger='islay.auth.tests.base.StaticTextChallenger')(self.unauthorised)
     
     def test_challenger_is_invoked_on_401(self):
-        response = self.request.get_response(self.unauthorised)
+        self.app = AuthFactory({}, challenger='islay.auth.tests.base.StaticTextChallenger')(self.unauthorised)
+
+        response = self.request.get_response(self.app)
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.body, 'Who do you think you are?')
     
     def test_challenger_passes_403(self):
-        response = self.request.get_response(self.forbidden)
+        self.app = AuthFactory({}, challenger='islay.auth.tests.base.StaticTextChallenger')(self.forbidden)
+
+        response = self.request.get_response(self.app)
         self.assertEqual(response.status, '403 Forbidden')
