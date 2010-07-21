@@ -32,3 +32,10 @@ class StaticTextChallenger(object):
             start_response(200, headers)
             return ["Who do you think you are?", ]
         return ChallengeApp
+
+# Constants
+
+MINIMAL_REQUEST = {'HTTP_HOST':'example', 
+                   'wsgi.url_scheme':'http',
+                   'PATH_INFO':'/',
+                   'REQUEST_METHOD':'GET'}

@@ -5,12 +5,12 @@ from islay.auth.auth import AuthFactory
 from islay.auth.tests.base import IslayAuthTestCase
 from islay.auth.tests.base import ForbiddenApp
 from islay.auth.tests.base import UnauthorisedApp
+from islay.auth.tests.base import MINIMAL_REQUEST
 
 class TestUnauthorised(IslayAuthTestCase):
     
     def setUp(self):
-        e={'HTTP_HOST':'example', 'wsgi.url_scheme':'http'}
-        self.request = webob.Request(e)
+        self.request = webob.Request(MINIMAL_REQUEST)
         self.unauthorised = UnauthorisedApp
         self.app = AuthFactory({})(self.unauthorised)
     
@@ -25,8 +25,7 @@ class TestUnauthorised(IslayAuthTestCase):
 class TestChallenger(IslayAuthTestCase):
     
     def setUp(self):
-        e={'HTTP_HOST':'example', 'wsgi.url_scheme':'http'}
-        self.request = webob.Request(e)
+        self.request = webob.Request(MINIMAL_REQUEST)
         self.unauthorised = UnauthorisedApp
         self.forbidden = ForbiddenApp
     
