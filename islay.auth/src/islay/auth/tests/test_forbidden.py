@@ -13,11 +13,10 @@ class TestForbidden(IslayAuthTestCase):
         self.forbidden = ForbiddenApp
         self.app = AuthFactory({})(self.forbidden)
     
-    def test_unwrapped_application_returns_403(self):
+    def test_unwrapped_application_returns_401(self):
         response = self.request.get_response(self.forbidden)
-        self.assertEqual(response.status, '403 Forbidden')
+        self.assertEqual(response.status, '401 Unauthorized')
     
-    def test_middleware_hides_403(self):
+    def test_middleware_hides_401(self):
         response = self.request.get_response(self.forbidden)
         self.failIf(response.status.startswith('40'), '40x status code')
-    

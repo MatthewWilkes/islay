@@ -4,5 +4,8 @@ class IslayAuthTestCase(unittest.TestCase):
     pass
 
 def ForbiddenApp(environ, start_response):
-    start_response(403, [])
+    headers = []
+    headers.append(('WWW-Authenticate', 'Basic realm="WSGI"'))
+
+    start_response(401, headers)
     return
