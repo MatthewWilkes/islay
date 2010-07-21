@@ -12,7 +12,7 @@ class TestUnauthorised(IslayAuthTestCase):
     def setUp(self):
         self.request = webob.Request(MINIMAL_REQUEST)
         self.unauthorised = UnauthorisedApp
-        self.app = AuthFactory({})(self.unauthorised)
+        self.app = AuthFactory({}, challenger='islay.auth.tests.base.StaticTextChallenger')(self.unauthorised)
     
     def test_unwrapped_application_returns_401(self):
         response = self.request.get_response(self.unauthorised)
