@@ -31,6 +31,9 @@ setup(name='islay.auth',
           'zope.interface',
       ],
       entry_points="""
+            [paste.composite_factory]
+            auth = islay.auth.auth:CompositeAuthFactory
+
             [paste.filter_factory]
             auth = islay.auth.auth:AuthFactory
       """,

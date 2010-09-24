@@ -52,7 +52,10 @@ def AuthFactory(global_config, **local_conf):
     
     return lambda app: AuthMiddleware(app, identifiers, authenticators, challengers)
 
-    
+def CompositeAuthFactory(loader, global_config, **local_conf):
+    pass
+
+
 class AuthMiddleware(object):
     """An endpoint"""
 
